@@ -1,8 +1,7 @@
 import random
-import CLIP_.clip as clip
+
 import numpy as np
 import pydiffvg
-import sketch_utils as utils
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
@@ -11,6 +10,9 @@ from scipy.ndimage.filters import gaussian_filter
 from skimage.color import rgb2gray
 from skimage.filters import threshold_otsu
 from torchvision import transforms
+
+import sketch_utils as utils
+from CLIP_ import clip
 
 
 class Painter(torch.nn.Module):

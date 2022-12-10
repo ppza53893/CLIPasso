@@ -3,8 +3,6 @@ import warnings
 warnings.filterwarnings('ignore')
 warnings.simplefilter('ignore')
 
-import argparse
-import math
 import os
 import sys
 import time
@@ -13,18 +11,15 @@ import traceback
 import numpy as np
 import PIL
 import torch
-import torch.nn as nn
-import torch.nn.functional as F
 import wandb
 from PIL import Image
-from torchvision import models, transforms
-from tqdm.auto import tqdm, trange
+from torchvision import transforms
+from tqdm.auto import tqdm
 
 import config
 import sketch_utils as utils
 from models.loss import Loss
 from models.painter_params import Painter, PainterOptimizer
-from IPython.display import display, SVG
 
 
 def load_renderer(args, target_im=None, mask=None):
@@ -84,7 +79,7 @@ def main(args):
     renderer.set_random_noise(0)
     img = renderer.init_image(stage=0)
     optimizer.init_optimizers()
-    
+
     # not using tdqm for jupyter demo
     if args.display:
         epoch_range = range(args.num_iter)

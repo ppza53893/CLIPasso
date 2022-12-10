@@ -4,16 +4,16 @@ import imageio
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
+import PIL
 import pydiffvg
 import skimage
 import skimage.io
 import torch
 import wandb
-import PIL
 from PIL import Image
+from skimage.transform import resize
 from torchvision import transforms
 from torchvision.utils import make_grid
-from skimage.transform import resize
 
 from U2Net_.model import U2NET
 
@@ -280,7 +280,7 @@ def get_mask_u2net(args, pil_im):
     mask = resize(mask, (h, w), anti_aliasing=False)
     mask[mask < 0.5] = 0
     mask[mask >= 0.5] = 1
-    
+
     # predict_np = predict.clone().cpu().data.numpy()
     im = Image.fromarray((mask[:, :, 0]*255).astype(np.uint8)).convert('RGB')
     im.save(f"{args.output_dir}/mask.png")

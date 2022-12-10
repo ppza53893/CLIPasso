@@ -8,34 +8,23 @@ import warnings
 warnings.filterwarnings('ignore')
 warnings.simplefilter('ignore')
 
-from cog import BasePredictor, Input, Path
-import subprocess as sp
 import os
-import re
-
-import imageio
-import matplotlib.pyplot as plt
-import numpy as np
-import pydiffvg
-import torch
-from PIL import Image
-import multiprocessing as mp
-from shutil import copyfile
-
-import argparse
-import math
+import subprocess as sp
 import sys
 import time
 import traceback
+from shutil import copyfile
 
+import numpy as np
 import PIL
-import torch.nn as nn
-import torch.nn.functional as F
+import pydiffvg
+import torch
 import wandb
-from torchvision import models, transforms
+from cog import BasePredictor, Input, Path
+from PIL import Image
+from torchvision import transforms
 from tqdm import tqdm
 
-import config
 import sketch_utils as utils
 from models.loss import Loss
 from models.painter_params import Painter, PainterOptimizer
@@ -57,7 +46,7 @@ class Predictor(BasePredictor):
         mask_object: int = Input(description="It is recommended to use images without a background, however, if your image contains a background, you can mask it out by using this flag with 1 as an argument",default=0),
         fix_scale: int = Input(description="If your image is not squared, it might be cut off, it is recommended to use this flag with 1 as input to automatically fix the scale without cutting the image",default=0),
     ) -> Path:
-        
+
         self.num_sketches = trials
         target_image_name = os.path.basename(str(target_image))
 
@@ -85,7 +74,7 @@ class Predictor(BasePredictor):
         seeds = list(range(0, self.num_sketches * 1000, 1000))
 
         losses_all = {}
-        
+
         for seed in seeds:
             wandb_name = f"{test_name}_{num_strokes}strokes_seed{seed}"
             sp.run(["python", "config.py", target,
@@ -104,7 +93,7 @@ class Predictor(BasePredictor):
             config_init = np.load(f"{output_dir}/{wandb_name}/config_init.npy", allow_pickle=True)[()]
             args = Args(config_init)
             args.cog_display = True
-            
+
             final_config = vars(args)
             try:
                 configs_to_save = main(args)
@@ -123,7 +112,7 @@ class Predictor(BasePredictor):
             loss_eval = np.array(config['loss_eval'])
             inds = np.argsort(loss_eval)
             losses_all[wandb_name] = loss_eval[inds][0]
-            # return Path(f"{output_dir}/{wandb_name}/best_iter.svg") 
+            # return Path(f"{output_dir}/{wandb_name}/best_iter.svg")
 
 
         sorted_final = dict(sorted(losses_all.items(), key=lambda item: item[1]))
@@ -143,7 +132,7 @@ class Args():
     def __init__(self, config):
         for k in config.keys():
             setattr(self, k, config[k])
-        
+
 
 def load_renderer(args, target_im=None, mask=None):
     renderer = Painter(num_strokes=args.num_paths, args=args,

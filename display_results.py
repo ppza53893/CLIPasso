@@ -3,13 +3,20 @@ import os
 import re
 
 import imageio
-import matplotlib.pyplot as plt
-import moviepy.editor as mvp
 import numpy as np
-import pydiffvg
+
+try:
+    import pydiffvg
+except (ImportError, ModuleNotFoundError):
+    from fix_diffvg import fix_pydiffvg_import
+    fix_pydiffvg_import()
+
+    import pydiffvg
+
+    del fix_pydiffvg_import
+
 import torch
-from IPython.display import Image as Image_colab
-from IPython.display import display, SVG
+from IPython.display import SVG, display
 from PIL import Image
 
 parser = argparse.ArgumentParser()

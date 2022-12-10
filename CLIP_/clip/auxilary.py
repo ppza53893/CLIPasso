@@ -1,19 +1,16 @@
-import torch
 import warnings
-from typing import Tuple, Optional
+from typing import Optional, Tuple
 
 import torch
 from torch import Tensor
-from torch.nn.init import xavier_uniform_
-from torch.nn.init import constant_
-from torch.nn.init import xavier_normal_
-from torch.nn.parameter import Parameter
 from torch.nn import functional as F
+from torch.nn.init import constant_, xavier_normal_, xavier_uniform_
+from torch.nn.parameter import Parameter
 
 # We define this function as _pad because it takes an argument
 # named pad, which clobbers the recursive reference to the pad
 # function needed for __torch_function__ support
-pad = F._pad
+pad = F.pad
 
 # This class exists solely for Transformer; it has an annotation stating
 # that bias is never None, which appeases TorchScript

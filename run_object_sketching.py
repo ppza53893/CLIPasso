@@ -8,14 +8,15 @@ import argparse
 import multiprocessing as mp
 import os
 import subprocess as sp
+import time
 from shutil import copyfile
 
 import numpy as np
 import torch
+from IPython.display import SVG
 from IPython.display import Image as Image_colab
-from IPython.display import display, SVG, clear_output
-from ipywidgets import IntSlider, Output, IntProgress, Button
-import time
+from IPython.display import clear_output, display
+from ipywidgets import IntProgress, IntSlider, Output
 
 parser = argparse.ArgumentParser()
 parser.add_argument("--target_file", type=str,
@@ -104,8 +105,8 @@ def run(seed, wandb_name):
     loss_eval = np.array(config['loss_eval'])
     inds = np.argsort(loss_eval)
     losses_all[wandb_name] = loss_eval[inds][0]
- 
-    
+
+
 def display_(seed, wandb_name):
     path_to_svg = f"{output_dir}/{wandb_name}/svg_logs/"
     intervals_ = list(range(0, num_iter, save_interval))
@@ -115,7 +116,7 @@ def display_(seed, wandb_name):
     display(out)
     for i in intervals_:
         filename = f"svg_iter{i}.svg"
-        not_exist = True 
+        not_exist = True
         while not_exist:
             not_exist = not os.path.isfile(f"{path_to_svg}/{filename}")
             continue
@@ -133,8 +134,6 @@ def display_(seed, wandb_name):
                     ))
             display(SVG(f"{path_to_svg}/svg_iter{i}.svg"))
 
-    
-    
 if multiprocess:
     ncpus = 10
     P = mp.Pool(ncpus)  # Generate pool of workers
